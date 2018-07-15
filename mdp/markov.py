@@ -18,20 +18,10 @@ def utility(v, t, u, reward, gamma):
     return reward + gamma * future_utility
 
 
-def value_iteration():
-    states_count = 12
+def value_iteration(t, u_init, r, gamma, epsilon):
+    u = u_init.copy()
 
-    t = np.load("t.npy")
-
-    u = np.array([0.0, 0.0, 0.0, 0.0,
-                  0.0, 0.0, 0.0, 0.0,
-                  0.0, 0.0, 0.0, 0.0])
-
-    r = np.array([-0.04, -0.04, -0.04, +1.0,
-                  -0.04, 0.0, -0.04, -1.0,
-                  -0.04, -0.04, -0.04, -0.04])
-    gamma = 0.9999
-    epsilon = 0.0001
+    states_count = r.shape[0]
 
     iteration = 0
 
@@ -130,23 +120,13 @@ def print_policy(p, shape):
     print(policy_string)
 
 
-def policy_iteration():
-    t = np.load("t.npy")
-
-    u = np.array([0.0, 0.0, 0.0, 0.0,
-                  0.0, 0.0, 0.0, 0.0,
-                  0.0, 0.0, 0.0, 0.0])
-
-    r = np.array([-0.04, -0.04, -0.04, +1.0,
-                  -0.04, 0.0, -0.04, -1.0,
-                  -0.04, -0.04, -0.04, -0.04])
+def policy_iteration(t, u_init, r, gamma, epsilon):
+    u = u_init.copy()
 
     p = np.random.randint(0, 4, size=12).astype(np.float32)
     p[5] = np.NaN
     p[3] = p[7] = -1
 
-    gamma = 0.9999
-    epsilon = 0.0001
     iteration = 0
 
     while True:
@@ -187,29 +167,38 @@ def run():
                    0.0, 0.0, 0.0, 0.0,
                    1.0, 0.0, 0.0, 0.0]])
 
+    # Utility vector
+    u_optimal = np.array([[0.812, 0.868, 0.918, 1.0,
+                           0.762, 0.0, 0.660, -1.0,
+                           0.705, 0.655, 0.611, 0.388]])
+
     # Transition matrix loaded from file
-    # (It is too big to write here)
     t = np.load("t.npy")
 
-    # Utility vector
-    u = np.array([[0.812, 0.868, 0.918, 1.0,
-                   0.762, 0.0, 0.660, -1.0,
-                   0.705, 0.655, 0.611, 0.388]])
+    u_init = np.array([0.0, 0.0, 0.0, 0.0,
+                       0.0, 0.0, 0.0, 0.0,
+                       0.0, 0.0, 0.0, 0.0])
+
+    r = np.array([-0.04, -0.04, -0.04, +1.0,
+                  -0.04, 0.0, -0.04, -1.0,
+                  -0.04, -0.04, -0.04, -0.04])
 
     # Defining the reward for state (1,1)
-    reward = -0.04
-    # Assuming that the discount factor is equal to 1.0
-    gamma = 1.0
+    reward = r[8]
+
+    # value iteration parameters
+    gamma = 0.9999
+    epsilon = 0.0001
 
     # Use the Bellman equation to find the utility of state (1,1)
-    utility_11 = utility(v, t, u, reward, gamma)
+    utility_11 = utility(v, t, u_optimal, reward, gamma)
     print("Utility of state (1,1): " + str(utility_11))
 
     print("running value iteration")
-    value_iteration()
+    value_iteration(t, u_init, r, gamma, epsilon)
 
     print("running policy iteration")
-    policy_iteration()
+    policy_iteration(t, u_init, r, gamma, epsilon)
 
 
 run()
