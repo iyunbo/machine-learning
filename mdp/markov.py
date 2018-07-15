@@ -161,23 +161,21 @@ def policy_iteration(t, u_init, r, gamma, epsilon):
 
 
 def run():
-    # Starting state vector
     # The agent starts from (1, 1)
     v = np.array([[0.0, 0.0, 0.0, 0.0,
                    0.0, 0.0, 0.0, 0.0,
                    1.0, 0.0, 0.0, 0.0]])
 
-    # Utility vector
-    u_optimal = np.array([[0.812, 0.868, 0.918, 1.0,
-                           0.762, 0.0, 0.660, -1.0,
-                           0.705, 0.655, 0.611, 0.388]])
-
     # Transition matrix loaded from file
     t = np.load("t.npy")
 
+    # Utility vector
     u_init = np.array([0.0, 0.0, 0.0, 0.0,
                        0.0, 0.0, 0.0, 0.0,
                        0.0, 0.0, 0.0, 0.0])
+    u_optimal = np.array([[0.812, 0.868, 0.918, 1.0,
+                           0.762, 0.0, 0.660, -1.0,
+                           0.705, 0.655, 0.611, 0.388]])
 
     r = np.array([-0.04, -0.04, -0.04, +1.0,
                   -0.04, 0.0, -0.04, -1.0,
